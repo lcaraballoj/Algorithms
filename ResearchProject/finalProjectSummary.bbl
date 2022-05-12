@@ -1,0 +1,23 @@
+\begin{thebibliography}{1}
+
+\bibitem{noauthor_knapsack_nodate}
+The {{Knapsack Problem}} | {{Data Structures}} and {{Algorithms}}.
+\newblock
+  https://stevenschmatz.gitbooks.io/data-structures-and-algorithms/content/281/lecture\_20.html.
+
+\bibitem{noauthor_knapsack_nodate-2}
+Knapsack {{Programming Using Dynamic Programming}} and its {{Analysis}}.
+\newblock https://www.codesdope.com/course/algorithms-knapsack-problem/.
+
+\bibitem{martin_01_2020}
+Matthew Martin.
+\newblock 0/1 {{Knapsack Problem Fix}} using {{Dynamic Programming Example}}.
+\newblock https://www.guru99.com/knapsack-problem-dynamic-programming.html,
+  March 2020.
+
+\bibitem{neopolitan_foundations_nodate}
+Richard~E. Neopolitan.
+\newblock {\em Foundations of {{Algorithms}}}.
+\newblock {Jones \& Bartlett Learning}, the fifth edition.
+
+\end{thebibliography}

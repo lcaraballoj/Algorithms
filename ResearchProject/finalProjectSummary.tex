@@ -1,0 +1,224 @@
+\input{/Users/linneacaraballo/OneDrive - Sacred Heart University/Classes/Spring 2022/settings.tex}
+\usepackage{booktabs}
+\usepackage{color, colortbl}
+\usepackage{polynom}
+\usepackage{tcolorbox}
+
+\definecolor{darkRed}{cmyk}{0,1,.87,.22}
+\definecolor{lightRed}{cmyk}{0,.67,.52,0}
+
+\newcolumntype{R}{>{\columncolor{darkRed}}c}
+
+\begin{document}
+	
+	\rhead{0-1 Knapsack Problem} 
+	\cfoot{\thepage\ of \pageref{LastPage}}
+	
+	\begin{itemize}
+		\item \textbf{Problem:} Suppose you are on a hiking trip and you need to fill your knapsack with items necessary for the trip. Your knapsack has a capacity of $W$ and there are $N$ items to choose from. Each item has two attributes, the value (which determines the importance of said item) and the weight of the item. The goal of the problem is to pack your knapsack with a combination of items that maximizes the total value.
+		
+		\item Formalized the problem is:
+		\begin{align*}
+			\mbox{Suppose there are } n \mbox{ items.} \\
+			S &= \{item_1, item_2, item_3, ...\} \\
+			w_i &= \mbox{weight of } item_i \\
+			p_i &= \mbox{profit of } item_i \\
+			W &= \mbox{maximum weight of the knapsack} \\
+			N &\subseteq S \mbox{ s.t. } N \mbox{ is the optimal subset of N.}\\
+			\mbox{Need to determine:} \\
+			&\sum_{item_i \in N}p_i \mbox{ is maximized subject to } \sum_{item_i \in N} w_i \leq W
+		\end{align*}
+		\item \textbf{Brute Force:} consider all the subsets of $n$ items, discard those that exceed $W$ and determine the maximum of the remaining subsets. [$2^n$ subsets of a set containing $n$ items]
+		\begin{itemize}
+			\item Exponential-time
+		\end{itemize}
+		
+		\item \textbf{Greedy Strategy:} 
+		\begin{itemize}
+			\item Steal items with the largest profit first (steal in non-increasing order)
+			\begin{itemize}
+				\item Does not work well if most profitable item has a large weight in comparison to the profit
+			\end{itemize}
+			
+			\item Steal lightest item first
+			\begin{itemize}
+				\item Fails when light item has low profit in comparison to its weight.
+			\end{itemize}
+			
+			\item Steal items with largest profit per unit weight first.
+			\begin{itemize}
+				\item Can still fail, so not the solution for the 0-1 Knapsack
+				\item Only a solution for the \textbf{Fractional Knapsack Problem} which allows for fractions of an item.
+			\end{itemize}
+		\end{itemize}
+		
+		\item \textbf{Dynamic Programing Approach:}
+		\begin{itemize}
+			\item Bottom-Up
+				\begin{itemize}
+					\item The goal is to put values into a table where the rows represent the weight limit and the columns represent the items. This means that if we pick a cell $(i, j)$ it would contain the optimal value for the first $i$ items for a weight limit of $j$.
+					\item $O(n * W)$, but can exceed the brute force method if $W = n!$ leaving us with order $O(n*n!)$
+				\end{itemize}
+				\textbf{Example}
+				\begin{table}[h!]
+					\begin{center}
+						\caption{Example from CodesDope \cite{noauthor_knapsack_nodate-2}}
+						\label{tab:example2}
+						\begin{tabular}{c|c|c}
+							\toprule % <-- Toprule here
+							\textbf{Item Number} & \textbf{Weight} & \textbf{Value}\\
+							$item_i$ & $w_i$ & $p_i$ \\
+							\midrule % <-- Midrule here
+							1 & 3 & 8 \\
+							2 & 2 & 3 \\
+							3 & 4 & 9 \\
+							4 & 1 & 6 
+						\end{tabular}
+					\end{center} \vspace{12pt}
+					$$
+					W = 5
+					$$
+				\end{table}
+			
+				\begin{table}[h!]
+					\begin{center}
+						\caption{Example from CodesDope \cite{noauthor_knapsack_nodate-2}}
+						\label{tab:example2-step2}
+						\begin{tabular}{R|c|c|c|c|c|c}
+							\toprule % <-- Toprule here
+							\rowcolor{darkRed}
+							\cellcolor{lightRed}\textcolor{white}{\textbf{$w \rightarrow$}} & \textcolor{white}{\textbf{0}} & \textcolor{white}{\textbf{1}} & \textcolor{white}{\textbf{2}} & \textcolor{white}{\textbf{3}} & \textcolor{white}{\textbf{4}} & \textcolor{white}{\textbf{5}}\\
+							\rowcolor{darkRed}
+							\cellcolor{lightRed}\textcolor{white}{$item_i \downarrow$} & & & & & & \\
+							\midrule % <-- Midrule here
+							\textcolor{white}{0} & 0 & 0 & 0 & 0 & 0 &  0 \\
+							\hline
+							\textcolor{white}{1} &  0 & \cellcolor{lightRed}\textcolor{white}{0} & \cellcolor{lightRed}\textcolor{white}{0} & \cellcolor{lightRed}\textcolor{white}{8} & \cellcolor{lightRed}\textcolor{white}{8} & \cellcolor{lightRed}\textcolor{white}{8} \\
+							\hline
+							\textcolor{white}{2} & 0 & & & & \\
+							\hline
+							\textcolor{white}{3} & 0 & & & & & \\
+							\hline
+							\textcolor{white}{4} & 0 & & & & &
+						\end{tabular}
+					\end{center} \vspace{12pt}
+				\end{table}
+				\textbf{Recall:} $w_1 = 3$ with a value of $v_1 = 8$. This means that for all $w < 3$ that we cannot take an item, so these cells have a $0 \mbox{. For any } w \geq 3$ we can put item 1 into our knapsack, so these cell values will be $8$. 
+				
+				\begin{table}[h!]
+					\begin{center}
+						\caption{Example from CodesDope \cite{noauthor_knapsack_nodate-2}}
+						\label{tab:example2-fullTable}
+						\begin{tabular}{R|c|c|c|c|c|c}
+							\toprule % <-- Toprule here
+							\rowcolor{darkRed}
+							\cellcolor{lightRed}\textcolor{white}{\textbf{$W \rightarrow$}} & \textcolor{white}{\textbf{0}} & \textcolor{white}{\textbf{1}} & \textcolor{white}{\textbf{2}} & \textcolor{white}{\textbf{3}} & \textcolor{white}{\textbf{4}} & \textcolor{white}{\textbf{5}}\\
+							\rowcolor{darkRed}
+							\cellcolor{lightRed}\textcolor{white}{$item_i \downarrow$} & & & & & & \\
+							\midrule % <-- Midrule here
+							\textcolor{white}{0} & 0 & 0 & 0 & 0 & 0 &  0 \\
+							\hline
+							\textcolor{white}{1} & 0 & 0 & 0 & 8 & 8 & 8 \\
+							\hline
+							\textcolor{white}{2} & 0 & 0 & 3 & 8 & 8 & 11 \\
+							\hline
+							\textcolor{white}{3} & 0 & 0 & 3 & 8 & 8 & 11 \\
+							\hline
+							\textcolor{white}{4} & 0 & 6 & 6 & 9 & 14 & 15
+						\end{tabular}
+					\end{center} \vspace{12pt}
+				\end{table}
+				\textbf{Observe:} $F(4,1) = 6$ because $w_4 = 1$ and $v_4 = 6$, so we can carry that item with a $w = 1$. Also observe that $F(4,5) = 15$ becuase we can take $item_3 \mbox{ and } item_4 \mbox{, such that } w_3 + w_4 = 5 \mbox{ and } v_3 + v_4 = 9 + 6$.
+			\item Recursive (Top-Down)
+				\begin{itemize}
+					\item Consider $F[i][w] \mbox{ and } F[i-1][W] \mbox{ and } F[i-1][W - w_i]$ where $n$ is the number of items and $i$ is the item we are talking about/the row we are in. Where we start from $n$ and end when either $n = 1 \mbox{ or } w \leq 0$. Leaving us with the equation. 
+					\begin{equation*}
+						F[i][W] = \left\{
+						\begin{array}{ll}
+							maximum(P[i-1][W], \ v_i + P[i-1][w-w_i]) & \mbox{if }  w_i \leq W \\
+							P[n-1][W]& \mbox{if } w_i > W
+						\end{array}
+						\right.
+					\end{equation*}
+					\item $O(minimize((n*W),(2^n)))$ [The order will never exceed $O(2^n)$]
+				\end{itemize}
+				\textbf{Example}
+				\begin{table}[h!]
+					\begin{center}
+						\caption{Example from \textit{Foundations of Algorithms} \cite{neopolitan_foundations_nodate}}
+						\label{tab:example3}
+						\begin{tabular}{c|c|c}
+							\toprule % <-- Toprule here
+							\textbf{Item Number} & \textbf{Weight} & \textbf{Value}\\
+							$item_i$ & $w_i$ & $p_i$ \\
+							\midrule % <-- Midrule here
+							1 & 5 & 50 \\
+							2 & 10 & 60 \\
+							3 & 20 & 140 \\ 
+						\end{tabular}
+					\end{center} \vspace{12pt}
+					$$
+					W = 30
+					$$
+				\end{table}
+				\begin{itemize}
+				\item \textbf{Determine the entries need:} 
+				\begin{itemize}
+					\item Row 3 we need $F[3][30]$
+					\item Row 2 we compute $F[3][30]$, thus we need $F[2][30] \mbox{ and } F[3-1][30-w_3] = F[2][10]$
+					\item Row 2 we compute $F[2][30]$, so we need $F[1][30] \mbox{ and } F[1][20]$ 
+					\item Row 1 we compute $F[1, 10] \mbox{ and } F[1][0]$
+					\item Stop because $n = 1$ as well as $w \leq 0$
+				\end{itemize}
+			\end{itemize}
+			\textbf{Step 1: }
+			\begin{align*}
+				F[1][w] &= 
+				\begin{cases}
+					maximum(P[0][w], \ 50 + P[0][w-5]) & \mbox{if }  w_1 = 5 \leq w \\
+					P[0][5] & \mbox{if } w_1 = 5 > w
+				\end{cases} \\
+				&= 
+				\begin{cases}
+					50 & \mbox{if }  5 \leq w \\
+					0 & \mbox{if } 5 > w
+				\end{cases}
+			\end{align*}
+			
+			\textbf{Step 2: }
+			\begin{align*}
+				F[2][10] &= 
+				\begin{cases}
+					maximum(P[1][10], \ 60 + P[1][0]) & \mbox{if }  w_2 = 10 \leq 10 \\
+					P[1][10] & \mbox{if } w_2 = 10 > 10
+				\end{cases} \\
+				&= 60
+			\end{align*}
+			
+			\textbf{Step 3: }
+			\begin{align*}
+				F[2][30] &= 
+				\begin{cases}
+					maximum(P[1][30], \ 60 + P[1][20]) & \mbox{if }  w_2 = 10 \leq 30 \\
+					P[1][30] & \mbox{if } w_2 = 10 > 30
+				\end{cases} \\
+				&= 60 + 50 = 110
+			\end{align*}
+			
+			\textbf{Step 4: }
+			\begin{align*}
+				F[3][30] &= 
+				\begin{cases}
+					maximum(P[2][30], \ 140 + P[2][10]) & \mbox{if }  w_3 = 20 \leq 30 \\
+					P[2][30] & \mbox{if } w_2 = 20 > 30
+				\end{cases} \\
+				&= 140 + 60 = 200
+			\end{align*}
+		\end{itemize}
+	\end{itemize}
+
+	\bibliographystyle{plain}
+	\bibliography{Algorithms} 
+	\textcolor{white}{\cite{martin_01_2020}\cite{neopolitan_foundations_nodate}\cite{noauthor_knapsack_nodate}\cite{noauthor_knapsack_nodate-2}}
+	
+\end{document}
